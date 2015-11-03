@@ -14,7 +14,7 @@ namespace Web1
 
         protected void Application_Start()
         {
-            Logging.Initialize("web2");
+            Logging.Initialize("web1");
 
             Bus = Configure.With(new BuiltinHandlerActivator())
                 .Logging(Config.Logging)

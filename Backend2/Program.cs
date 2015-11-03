@@ -2,6 +2,7 @@
 using System.Net.Http;
 using Rebus.Activation;
 using Rebus.Config;
+using Rebus.Messages;
 using Rebus.Transport.Msmq;
 using Serilog;
 using Shared;
@@ -18,12 +19,14 @@ namespace Backend2
 
             using (var activator = new BuiltinHandlerActivator())
             {
-                activator.Handle<DidStuffInTheBackground>(async message =>
+                activator.Handle<DidStuffInTheBackground>(async (_, context, message) =>
                 {
                     Log.Information("I just learned that someone did stuff in the background - I'll get some data");
 
                     using (var client = new HttpClient())
                     {
+                        client.DefaultRequestHeaders.Add("x-correlation-id", context.Message.Headers[Headers.CorrelationId]);
+
                         var data = await client.GetStringAsync("http://localhost:64599/api/data");
 
                         Log.Information("I'm done doing stuff now.... here's the data: {Data}", data);
