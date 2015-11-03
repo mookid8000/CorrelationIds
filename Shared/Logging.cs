@@ -1,9 +1,7 @@
-﻿using System;
-using Rebus.Serilog;
+﻿using Rebus.Serilog;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Sinks.Elasticsearch;
 
 namespace Shared
 {
@@ -20,11 +18,7 @@ namespace Shared
                 .Enrich.With<HttpContextCorrelationIdEnricher>()
                 .Enrich.With<EmptyCorrelationIdIfNecessary>()
                 .WriteTo.RollingFile($@"c:\d60\logs\correlationIds\{system}.txt", outputTemplate: Template)
-                .WriteTo.ColoredConsole(outputTemplate: Template)
-                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("https://devops:HejMedDigMinVen@nsa.d60.dk"))
-                {
-                    BufferBaseFilename = $@"c:\d60\logs\correlationIds\es\{system}.txt"
-                });
+                .WriteTo.ColoredConsole(outputTemplate: Template);
 
             Log.Logger = configuration.CreateLogger();
         }
