@@ -10,7 +10,7 @@ namespace Web2
         {
             Logging.Initialize("web2");
 
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configure(Config.WebApi);
         }
     }
 }

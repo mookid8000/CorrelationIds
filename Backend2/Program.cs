@@ -20,11 +20,14 @@ namespace Backend2
             {
                 activator.Handle<DidStuffInTheBackground>(async message =>
                 {
-                    var client = new HttpClient();
+                    Log.Information("I just learned that someone did stuff in the background - I'll get some data");
 
-                    var data = await client.GetStringAsync("http://localhost:64599/api/data");
+                    using (var client = new HttpClient())
+                    {
+                        var data = await client.GetStringAsync("http://localhost:64599/api/data");
 
-                    Log.Information("I'm done doing stuff now.... here's the data: {Data}", data);
+                        Log.Information("I'm done doing stuff now.... here's the data: {Data}", data);
+                    }
                 });
 
                 var bus = Configure.With(activator)

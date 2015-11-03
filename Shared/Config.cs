@@ -1,6 +1,12 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
 using Rebus.Config;
+using Rebus.Messages;
 using Rebus.Persistence.SqlServer;
+using Rebus.Pipeline;
+using Rebus.Pipeline.Send;
 using Rebus.Routing;
 using Rebus.Routing.TypeBased;
 using Rebus.Serilog;
@@ -32,7 +38,39 @@ namespace Shared
 
         public static void WebApi(HttpConfiguration config)
         {
-            config.Filters.Add(new RequestIdFilter());
+            config.MapHttpAttributeRoutes();
+
+            config.Filters.Add(new CorrelationIdRequestFilter());
+        }
+
+        public static void TransferCorrelationIdFromHttpContextToOutgoingRebusMessages(this OptionsConfigurer configurer)
+        {
+            configurer.Decorate<IPipeline>(c =>
+            {
+                var pipeline = c.Get<IPipeline>();
+
+                var step = new HttpContextCorrelationIdOutgoingMessagesStep();
+
+                return new PipelineStepInjector(pipeline)
+                    .OnSend(step, PipelineRelativePosition.Before, typeof (FlowCorrelationIdStep));
+            });
+        }
+
+        class HttpContextCorrelationIdOutgoingMessagesStep : IOutgoingStep
+        {
+            public Task Process(OutgoingStepContext context, Func<Task> next)
+            {
+                var correlationId = HttpContext.Current?.Items[CorrelationIdRequestFilter.CorrelationIdHttpContextItemsKey]?.ToString();
+
+                if (correlationId != null)
+                {
+                    var message = context.Load<Message>();
+
+                    message.Headers[Headers.CorrelationId] = correlationId;
+                }
+
+                return next();
+            }
         }
     }
 }

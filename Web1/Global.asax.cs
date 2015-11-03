@@ -14,15 +14,16 @@ namespace Web1
 
         protected void Application_Start()
         {
-            Logging.Initialize("web1");
+            Logging.Initialize("web2");
 
             Bus = Configure.With(new BuiltinHandlerActivator())
                 .Logging(Config.Logging)
                 .Transport(t => t.UseMsmqAsOneWayClient())
                 .Routing(Config.Routing)
+                .Options(o => o.TransferCorrelationIdFromHttpContextToOutgoingRebusMessages())
                 .Start();
 
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configure(Config.WebApi);
         }
 
         protected void Application_End()

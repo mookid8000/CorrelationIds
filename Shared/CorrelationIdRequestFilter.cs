@@ -7,7 +7,7 @@ using System.Web.Http.Filters;
 
 namespace Shared
 {
-    class RequestIdFilter : ActionFilterAttribute
+    class CorrelationIdRequestFilter : ActionFilterAttribute
     {
         public const string CorrelationIdHttpContextItemsKey = "correlation-id";
 

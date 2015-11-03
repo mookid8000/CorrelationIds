@@ -11,7 +11,7 @@ namespace Shared
             var httpContext = HttpContext.Current;
             if (httpContext == null) return;
 
-            var correlationId = httpContext.Items[RequestIdFilter.CorrelationIdHttpContextItemsKey];
+            var correlationId = httpContext.Items[CorrelationIdRequestFilter.CorrelationIdHttpContextItemsKey];
 
             logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("CorrelationId", correlationId ?? ""));
         }
