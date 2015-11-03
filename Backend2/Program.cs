@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using Rebus.Activation;
 using Rebus.Config;
 using Rebus.Transport.Msmq;
@@ -19,7 +20,11 @@ namespace Backend2
             {
                 activator.Handle<DidStuffInTheBackground>(async message =>
                 {
-                    Log.Information("I'm done doing stuff now....");
+                    var client = new HttpClient();
+
+                    var data = await client.GetStringAsync("http://localhost:64599/api/data");
+
+                    Log.Information("I'm done doing stuff now.... here's the data: {Data}", data);
                 });
 
                 var bus = Configure.With(activator)
