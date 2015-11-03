@@ -3,9 +3,7 @@ using System.Web.Http;
 using Rebus.Activation;
 using Rebus.Bus;
 using Rebus.Config;
-using Rebus.Serilog;
 using Rebus.Transport.Msmq;
-using Serilog;
 using Shared;
 
 namespace Web1

@@ -1,4 +1,5 @@
-﻿using Rebus.Config;
+﻿using System.Web.Http;
+using Rebus.Config;
 using Rebus.Persistence.SqlServer;
 using Rebus.Routing;
 using Rebus.Routing.TypeBased;
@@ -27,6 +28,11 @@ namespace Shared
         public static void Logging(RebusLoggingConfigurer configurer)
         {
             configurer.Serilog(Log.Logger);
+        }
+
+        public static void WebApi(HttpConfiguration config)
+        {
+            config.Filters.Add(new RequestIdFilter());
         }
     }
 }

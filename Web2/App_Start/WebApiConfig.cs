@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
+using Shared;
 
 namespace Web2
 {
@@ -9,6 +7,7 @@ namespace Web2
     {
         public static void Register(HttpConfiguration config)
         {
+            Config.WebApi(config);
             // Web API configuration and services
 
             // Web API routes
