@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Rebus.Serilog</name>
+    </assembly>
+    <members>
+        <member name="T:Rebus.Serilog.RebusCorrelationIdEnricher">
+            <summary>
+            Serilog log event enricher that adds Rebus' correlation ID to log events when called inside a Rebus message handler.
+            Relies on <see cref="P:Rebus.Pipeline.MessageContext.Current"/> being present - does not change the log line if it is not.
+            </summary>
+        </member>
+        <member name="T:Rebus.Serilog.SerilogConfigurationExtensions">
+            <summary>
+            Configuration extensions for setting up logging with Serilog
+            </summary>
+        </member>
+        <member name="M:Rebus.Serilog.SerilogConfigurationExtensions.Serilog(Rebus.Config.RebusLoggingConfigurer,Serilog.LoggerConfiguration)">
+            <summary>
+            Configures Rebus to use Serilog for all of its internal logging, deriving its logger by pulling a base logger from the given <see cref="T:Serilog.LoggerConfiguration"/>
+            </summary>
+        </member>
+        <member name="M:Rebus.Serilog.SerilogConfigurationExtensions.Serilog(Rebus.Config.RebusLoggingConfigurer,Serilog.ILogger)">
+            <summary>
+            Configures Rebus to use Serilog for all of its internal logging, deriving its loggers from the given <see cref="T:Serilog.ILogger"/> base logger
+            </summary>
+        </member>
+        <member name="M:Rebus.Serilog.SerilogConfigurationExtensions.WithRebusCorrelationId(Serilog.Configuration.LoggerEnrichmentConfiguration,System.String)">
+            <summary>
+            Configures Serilog to add the correlation ID of the Rebus message currently being handled to log events as the <paramref name="propertyName"/>
+            field. Does nothing when called outside of a message handler.
+            </summary>
+        </member>
+    </members>
+</doc>
