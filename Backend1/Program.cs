@@ -34,6 +34,7 @@ namespace Backend1
                     .Transport(t => t.UseMsmq("backend1"))
                     .Subscriptions(Config.Subscriptions)
                     .Routing(Config.Routing)
+                    .Options(o => o.SetMaxParallelism(50))
                     .Start();
 
                 Console.WriteLine("Press ENTER to quit");

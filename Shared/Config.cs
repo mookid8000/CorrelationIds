@@ -41,6 +41,7 @@ namespace Shared
             config.MapHttpAttributeRoutes();
 
             config.Filters.Add(new CorrelationIdRequestFilter());
+            config.Filters.Add(new ExceptionFilter());
         }
 
         public static void TransferCorrelationIdFromHttpContextToOutgoingRebusMessages(this OptionsConfigurer configurer)

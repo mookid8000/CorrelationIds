@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\DidStuffInTheBackground.cs" />
+    <Compile Include="ExceptionFilter.cs" />
     <Compile Include="HttpContextCorrelationIdEnricher.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="Commands\DoStuffInTheBackground.cs" />

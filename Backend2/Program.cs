@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Net.Http;
-using Rebus.Activation;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using Rebus.CastleWindsor;
 using Rebus.Config;
 using Rebus.Messages;
+using Rebus.Pipeline;
 using Rebus.Transport.Msmq;
-using Serilog;
 using Shared;
 using Shared.Events;
 #pragma warning disable 1998
@@ -17,27 +19,32 @@ namespace Backend2
         {
             Logging.Initialize("backend2");
 
-            using (var activator = new BuiltinHandlerActivator())
+            using (var container = new WindsorContainer())
             {
-                activator.Handle<DidStuffInTheBackground>(async (_, context, message) =>
-                {
-                    Log.Information("I just learned that someone did stuff in the background - I'll get some data");
+                container.RegisterHandler<DidStuffInTheBackgroundHandler>();
 
-                    using (var client = new HttpClient())
-                    {
-                        client.DefaultRequestHeaders.Add("x-correlation-id", context.Message.Headers[Headers.CorrelationId]);
+                container.Register(
+                    Component.For<HttpClient>()
+                        .UsingFactoryMethod(k =>
+                        {
+                            var messageContext = k.Resolve<IMessageContext>();
 
-                        var data = await client.GetStringAsync("http://localhost:64599/api/data");
+                            var client = new HttpClient();
 
-                        Log.Information("I'm done doing stuff now.... here's the data: {Data}", data);
-                    }
-                });
+                            var correlationId = messageContext.Message.Headers[Headers.CorrelationId];
+                            client.DefaultRequestHeaders.Add("x-correlation-id", correlationId);
 
-                var bus = Configure.With(activator)
+                            return client;
+                        })
+                        .LifestylePerRebusMessage()
+                    );
+
+                var bus = Configure.With(new CastleWindsorContainerAdapter(container))
                     .Logging(Config.Logging)
                     .Transport(t => t.UseMsmq("backend2"))
                     .Subscriptions(Config.Subscriptions)
                     .Routing(Config.Routing)
+                    .Options(o => o.SetMaxParallelism(50))
                     .Start();
 
                 bus.Subscribe<DidStuffInTheBackground>().Wait();
